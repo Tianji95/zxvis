@@ -1,0 +1,34 @@
+project(zxvis)
+
+INCLUDE_DIRECTORIES( BEFORE
+  src/3rdparty
+  src/app
+  src/runtime
+)
+
+SET(BASE_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs")
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    SET(GLEW_LIBRARY_PATH "${BASE_LIBRARY_PATH}/glew/Release/x64")
+    SET(GLFW_LIBRARY_PATH "${BASE_LIBRARY_PATH}/glfw/x64")
+    SET(ASSIMP_LIBRARY_PATH "${BASE_LIBRARY_PATH}/assimp/x64")
+else()
+    SET(GLEW_LIBRARY_PATH "${BASE_LIBRARY_PATH}/glew/Release/Win32")
+    SET(GLFW_LIBRARY_PATH "${BASE_LIBRARY_PATH}/glfw/x86")
+    SET(ASSIMP_LIBRARY_PATH "${BASE_LIBRARY_PATH}/assimp/x86")
+endif()
+LINK_DIRECTORIES("${GLEW_LIBRARY_PATH}")
+LINK_DIRECTORIES("${GLFW_LIBRARY_PATH}")
+LINK_DIRECTORIES("${ASSIMP_LIBRARY_PATH}")
+
+file(GLOB SOURCE
+    ./src/app/*.cpp
+    ./src/runtime/*.cpp
+)
+
+file(GLOB HEADERS
+    ./src/app/*.h
+    ./src/runtime/*.h
+)
+SET(EXECUTABLE_OUTPUT_PATH ./build)
+add_executable(CGCenter ${SOURCE} ${HEADERS})
