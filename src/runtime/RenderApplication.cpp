@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION // 这个算是stb的一个小坑，必须要先定义宏，才能用stb的实现
 #include <stb/stb_image.h>
 #include <chrono>
-#include "verticsData.h"
+#include "verticesData.h"
 
 void RenderApplication::Run()
 {
@@ -1042,9 +1042,7 @@ void RenderApplication::CreateImage(uint32_t width, uint32_t height, VkFormat fo
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create image!");
-    }
+    VK_CHECK_RESULT(vkCreateImage(device, &imageInfo, nullptr, &image));
 
     VkMemoryRequirements memRequirements;
     vkGetImageMemoryRequirements(device, image, &memRequirements);
@@ -1080,10 +1078,10 @@ void RenderApplication::CreateTextureImage()
     vkUnmapMemory(device, stagingBufferMemory);
     stbi_image_free(pixels);
 
-    CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-    TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    CreateImage(texWidth, texHeight, VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+    TransitionImageLayout(textureImage, VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-    TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    TransitionImageLayout(textureImage, VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -1091,7 +1089,7 @@ void RenderApplication::CreateTextureImage()
 
 void RenderApplication::CreateTextureImageView()
 {
-    textureImageView = CreateImageView(textureImage, VK_FORMAT_R8G8B8_UNORM);
+    textureImageView = CreateImageView(textureImage, VK_FORMAT_R16G16B16A16_SFLOAT);
 }
 
 void RenderApplication::CreateTextureSampler()

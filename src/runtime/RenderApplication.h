@@ -6,14 +6,14 @@
 #endif
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <string>
 #include <assert.h>
 #include <Windows.h>
 
 constexpr uint32_t APP_NAME_STR_LEN = 80;
 constexpr uint32_t WINDOW_WIDTH = 1024;
 constexpr uint32_t WINDOW_HEIGHT = 768;
-const std::string MODEL_PATH = "models/chalet.obj";
-const std::string TEXTURE_PATH = "img/1.jpg";
+const std::string TEXTURE_PATH = "F:/GitHub/zxvis/resources/images/1.jpg";
 
 void inline VK_CHECK_RESULT(const VkResult &f)
 {
