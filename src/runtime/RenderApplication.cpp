@@ -17,9 +17,9 @@ void RenderApplication::Run()
     CreateMyWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
     CreateSwapChain();
     CreateCommandPool();
-    CreateTextureImage();
-    CreateTextureImageView();
-    CreateTextureSampler();
+    //CreateTextureImage();
+    //CreateTextureImageView();
+    //CreateTextureSampler();
     CreateVertexBuffer();
     CreateIndexBuffer();
     CreateUniformBuffer();
@@ -33,7 +33,7 @@ void RenderApplication::Run()
     CreateFrameSemaphores();
 
     while (true) {
-        UpdateUniformBuffer();
+        //UpdateUniformBuffer();
         DrawFrame();
     }
 
@@ -52,8 +52,8 @@ void RenderApplication::Run()
     vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
     vkDestroyDescriptorPool(device, descriptorPool, nullptr);
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
-    vkDestroyImage(device, textureImage, nullptr);
-    vkFreeMemory(device, textureImageMemory, nullptr);
+    //vkDestroyImage(device, textureImage, nullptr);
+    //vkFreeMemory(device, textureImageMemory, nullptr);
     vkDestroyBuffer(device, uniformBuffer, nullptr);
     vkFreeMemory(device, uniformBufferMemory, nullptr);
     vkDestroyRenderPass(device, renderPass, nullptr);
@@ -61,8 +61,8 @@ void RenderApplication::Run()
     vkFreeMemory(device, indexBufferMemory, nullptr);
     vkDestroyBuffer(device, vertexBuffer, nullptr);
     vkFreeMemory(device, vertexBufferMemory, nullptr);
-    vkDestroySampler(device, textureSampler, nullptr);
-    vkDestroyImageView(device, textureImageView, nullptr);
+    //vkDestroySampler(device, textureSampler, nullptr);
+    //vkDestroyImageView(device, textureImageView, nullptr);
     vkDestroySwapchainKHR(device, swapChain, nullptr);
     vkDestroySurfaceKHR(instance, surface, nullptr);
     DestroyWindow(window);
@@ -522,7 +522,7 @@ void RenderApplication::CreateUniformBuffer()
 
     UniformBufferObject ubo;
     ubo.model = glm::mat4(1.0f);
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view = glm::lookAt(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
     ubo.proj[1][1] *= -1;
 
@@ -565,12 +565,12 @@ void RenderApplication::CreateRenderPass()
 
 void RenderApplication::CreateDescriptorSetLayout()
 {
-    VkDescriptorSetLayoutBinding samplerLayoutBindingCI = {};
-    samplerLayoutBindingCI.binding = 1;
-    samplerLayoutBindingCI.descriptorCount = 1;
-    samplerLayoutBindingCI.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    samplerLayoutBindingCI.pImmutableSamplers = nullptr;
-    samplerLayoutBindingCI.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    //VkDescriptorSetLayoutBinding samplerLayoutBindingCI = {};
+    //samplerLayoutBindingCI.binding = 1;
+    //samplerLayoutBindingCI.descriptorCount = 1;
+    //samplerLayoutBindingCI.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    //samplerLayoutBindingCI.pImmutableSamplers = nullptr;
+    //samplerLayoutBindingCI.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
     VkDescriptorSetLayoutBinding uboLayoutBindingCI = {};
     uboLayoutBindingCI.binding = 0;
@@ -579,7 +579,8 @@ void RenderApplication::CreateDescriptorSetLayout()
     uboLayoutBindingCI.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     uboLayoutBindingCI.pImmutableSamplers = nullptr;
 
-    std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBindingCI, samplerLayoutBindingCI };
+    std::array<VkDescriptorSetLayoutBinding,1> bindings = { uboLayoutBindingCI };
+    //std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBindingCI, samplerLayoutBindingCI };
 
     VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCI = {};
     descriptorSetLayoutCI.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -594,8 +595,8 @@ void RenderApplication::CreateDescriptorPool()
     std::array<VkDescriptorPoolSize, 2> poolSizes = {};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = 1;
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[1].descriptorCount = 1;
+    //poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    //poolSizes[1].descriptorCount = 1;
 
     VkDescriptorPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -619,7 +620,8 @@ void RenderApplication::CreateDescriptorSet()
     bufferInfo.buffer = uniformBuffer;
     bufferInfo.offset = 0;
     bufferInfo.range = sizeof(UniformBufferObject);
-    std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+    std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
+    //std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrites[0].dstSet = descriptorSet;
     descriptorWrites[0].dstBinding = 0;
@@ -630,18 +632,18 @@ void RenderApplication::CreateDescriptorSet()
     descriptorWrites[0].pImageInfo = nullptr; // Optional
     descriptorWrites[0].pTexelBufferView = nullptr; // Optiona
 
-    VkDescriptorImageInfo imageInfo = {};
-    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageInfo.imageView = textureImageView;
-    imageInfo.sampler = textureSampler;
+    //VkDescriptorImageInfo imageInfo = {};
+    //imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    //imageInfo.imageView = textureImageView;
+    //imageInfo.sampler = textureSampler;
 
-    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrites[1].dstSet = descriptorSet;
-    descriptorWrites[1].dstBinding = 1;
-    descriptorWrites[1].dstArrayElement = 0;
-    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    descriptorWrites[1].descriptorCount = 1;
-    descriptorWrites[1].pImageInfo = &imageInfo;
+    //descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    //descriptorWrites[1].dstSet = descriptorSet;
+    //descriptorWrites[1].dstBinding = 1;
+    //descriptorWrites[1].dstArrayElement = 0;
+    //descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    //descriptorWrites[1].descriptorCount = 1;
+    //descriptorWrites[1].pImageInfo = &imageInfo;
 
     vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
@@ -649,7 +651,7 @@ void RenderApplication::CreateDescriptorSet()
 void RenderApplication::CreatePipeline()
 {
     uint32_t filelength;
-    uint32_t* vertexShaderCode = readFile(filelength, "shaders/vertexShader.spv");		// tmp
+    uint32_t* vertexShaderCode = readFile(filelength, "F:/GitHub/zxvis/src/shaders/texture.vert.spv");		// tmp
     VkShaderModuleCreateInfo vertexShaderCreateInfo = {};
     vertexShaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     vertexShaderCreateInfo.pCode = vertexShaderCode;
@@ -657,7 +659,7 @@ void RenderApplication::CreatePipeline()
     VK_CHECK_RESULT(vkCreateShaderModule(device, &vertexShaderCreateInfo, NULL, &vertexShaderModule));
     delete[] vertexShaderCode;
 
-    uint32_t* fragmentShaderCode = readFile(filelength, "shaders/fragmentShader.spv");		// tmp
+    uint32_t* fragmentShaderCode = readFile(filelength, "F:/GitHub/zxvis/src/shaders/texture.frag.spv");		// tmp
     VkShaderModuleCreateInfo fragmentShaderCreateInfo = {};
     fragmentShaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     fragmentShaderCreateInfo.pCode = fragmentShaderCode;
@@ -859,7 +861,7 @@ void RenderApplication::CreateDrawCommandBuffer()
         renderPassInfo.renderArea.offset = { 0, 0 };
         renderPassInfo.renderArea.extent = swapChainExtent;
 
-        VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+        VkClearValue clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -1078,10 +1080,10 @@ void RenderApplication::CreateTextureImage()
     vkUnmapMemory(device, stagingBufferMemory);
     stbi_image_free(pixels);
 
-    CreateImage(texWidth, texHeight, VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-    TransitionImageLayout(textureImage, VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    CreateImage(texWidth, texHeight, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+    TransitionImageLayout(textureImage, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-    TransitionImageLayout(textureImage, VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    TransitionImageLayout(textureImage, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -1089,7 +1091,7 @@ void RenderApplication::CreateTextureImage()
 
 void RenderApplication::CreateTextureImageView()
 {
-    textureImageView = CreateImageView(textureImage, VK_FORMAT_R16G16B16A16_SFLOAT);
+    textureImageView = CreateImageView(textureImage, VK_FORMAT_R32G32B32_UINT);
 }
 
 void RenderApplication::CreateTextureSampler()
