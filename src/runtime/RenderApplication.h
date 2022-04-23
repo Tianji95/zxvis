@@ -9,20 +9,13 @@
 #include <string>
 #include <assert.h>
 #include <Windows.h>
-
+#include "pipelineInfo.h"
 constexpr uint32_t APP_NAME_STR_LEN = 80;
 constexpr uint32_t WINDOW_WIDTH = 1024;
 constexpr uint32_t WINDOW_HEIGHT = 768;
 const std::string TEXTURE_PATH = "F:/GitHub/zxvis/resources/images/1.jpg";
 
-void inline VK_CHECK_RESULT(const VkResult &f)
-{
-    VkResult res = (f);
-    if (res != VK_SUCCESS) {
-        printf("Fatal : VkResult is %d in %s at line %d\n", res, __FILE__, __LINE__);
-        assert(res == VK_SUCCESS);
-    }
-}
+
 class RenderApplication {
 public:
     void Run();
@@ -60,7 +53,6 @@ private:
     void CopyBuffer(VkBuffer dstBuffer, VkBuffer srcBuffer, VkDeviceSize size);
     void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
     void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-    uint32_t* readFile(uint32_t& length, const char* filename);
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 private:
@@ -81,6 +73,7 @@ private:
     VkSurfaceKHR surface;
     VkFormat     swapChainImageFormat;
 
+
     VkSwapchainKHR             swapChain;
     std::vector<VkImage>       swapChainImages;
     std::vector<VkImageView>   swapChainImageViews;
@@ -99,11 +92,7 @@ private:
     VkDeviceMemory    indexBufferMemory;
     VkBuffer          vertexBuffer;
     VkDeviceMemory    vertexBufferMemory;
-    VkShaderModule    vertexShaderModule;
-    VkShaderModule    fragmentShaderModule;
-
-    VkPipeline        pipeline;
-    VkPipelineLayout  pipelineLayout;
+    PipelineInfo*     pipelineInfo;
     VkRenderPass      renderPass;
 
     VkCommandPool   commandPool;
