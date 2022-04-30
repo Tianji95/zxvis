@@ -35,7 +35,7 @@ void RenderApplication::Run()
     CreateFrameSemaphores();
 
     while (true) {
-        UpdateUniformBuffer();
+        // UpdateUniformBuffer();
         DrawFrame();
     }
 
@@ -685,7 +685,6 @@ void RenderApplication::CreateDrawCommandBuffer()
         vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineInfo->GetvkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
         IndexBuffer* ib = RenderDataManager::Instance().GetIndexBuffer();
         vkCmdDrawIndexed(commandBuffers[i], (ib->bufferSize) / (ib->typeSize), 1, 0, 0, 0);
-        //vkCmdDraw(commandBuffers[i], static_cast<uint32_t>(vertices.size()), 1, 0, 0);
         vkCmdEndRenderPass(commandBuffers[i]);
         VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffers[i]));
     }

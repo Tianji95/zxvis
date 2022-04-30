@@ -1,18 +1,6 @@
 #pragma once
 #include <vector>
-#include "primitive.h"
-
-struct VertexBuffer {
-    unsigned int bufferSize;
-    unsigned int stride;
-    const void* data;
-};
-
-struct IndexBuffer {
-    unsigned int bufferSize;
-    unsigned int typeSize;
-    const void* data;
-};
+#include "primitiveBuilder.h"
 
 class RenderDataManager {
 public:
@@ -22,18 +10,24 @@ public:
         return renderDataMgr;
     }
 
-    void MakeData();
     VertexBuffer* GetVertexBuffer();
     IndexBuffer* GetIndexBuffer();
 private:
+
     RenderDataManager()
     {
         MakeData();
     }
-    ~RenderDataManager() = default;
+    ~RenderDataManager()
+    {
+        FreeData();
+    }
+    void MakeData();
+    void FreeData();
     RenderDataManager(const RenderDataManager&);
     RenderDataManager& operator=(const RenderDataManager&);
 private:
+    PrimitiveBuilder* builder = nullptr;
     VertexBuffer vb;
     IndexBuffer ib;
 };

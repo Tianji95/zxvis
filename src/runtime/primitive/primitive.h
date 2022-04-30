@@ -1,34 +1,22 @@
 #pragma once
 #include "vec.h"
 
+struct VertexBuffer {
+	unsigned int bufferSize = 0;
+	unsigned int stride = 0;
+	uint8_t* data = nullptr;
+};
+
+struct IndexBuffer {
+	unsigned int bufferSize = 0;
+	unsigned int typeSize = 0;
+	uint8_t* data = nullptr;
+};
+
 class Primitive {
 public:
 	Primitive(){ }
 	virtual ~Primitive(){ }
-	virtual void SetCenter(vec2& c)
-	{
-		center = c;
-	}
-	virtual void SetParams(vec2& p);
-	virtual void* GetVertices();
-	virtual void* GetIndices();
-protected:
-	vec2 center;
-};
-
-class PrimitiveRGB : public Primitive{
-public:
-	PrimitiveRGB()
-	{
-	}
-	virtual ~PrimitiveRGB()
-	{
-	}
-	virtual void SetColor(vec3& c)
-	{
-		color = c;
-	}
-
-protected:
-	vec3 color;
+	virtual VertexBuffer GetVerticesBuffer() = 0;
+	virtual IndexBuffer GetIndicesBuffer() = 0;
 };
