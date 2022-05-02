@@ -10,11 +10,11 @@ public:
 		v.pos = pos;
 		v.rgb = color;
 		vertices.push_back(v); // bottom left;
-		v.pos.r += width * scale.r;
-		vertices.push_back(v); // bottom right;
-		v.pos.g += height * scale.g;
-		vertices.push_back(v); // top right;
 		v.pos.r -= width * scale.r;
+		vertices.push_back(v); // bottom right;
+		v.pos.g -= height * scale.g;
+		vertices.push_back(v); // top right;
+		v.pos.r += width * scale.r;
 		vertices.push_back(v); // top left;
 
 		indices.push_back(indexOffset);

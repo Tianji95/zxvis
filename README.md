@@ -9,12 +9,15 @@ data visualization of Scientometrics (papers)
 
 - primitives
 
-  - [ ] rectangle
-
+  - [x] rectangle
   - [ ] circle
   - [ ] pie
+  - [ ] spherical
+  - [ ] cube
+  - [ ] 
 
-
+- lines
+  - [ ] bezier
 
 
 
@@ -25,6 +28,8 @@ we only test code on windows using visual studio
 to build the project on windows, using:
 
 ```
+replace "E:/vulkansdk/Include" and "E:/vulkansdk/Lib" in "CMakeLists.txt" with your own path of vulkan
+
 cd zxvis
 mkdir build
 cd build
