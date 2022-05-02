@@ -39,7 +39,7 @@ void RenderDataManager::MakeData()
             for (auto subblock : block.data) {
                 float subblockWidth = subblock.percentage * blockWidth;
                 builder->SetColor(vec3(subblock.color.x, subblock.color.y, subblock.color.z));
-                builder->BuildRectangle(vec3(subblockx, subblocky, 0.0f), subblockWidth, blockHeight);
+                builder->BuildCube(vec3(subblockx, subblocky, 0.0f), subblockWidth, blockHeight, 0.15f);
                 subblockx -= subblockWidth;
             }
             blocky -= blockHeight + heightGap;

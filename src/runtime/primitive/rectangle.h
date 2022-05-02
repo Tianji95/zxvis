@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _RECTANGLE_H_
+#define _RECTANGLE_H_
+
 #include <vector>
 #include "vertex.h"
 #include "primitive.h"
@@ -44,3 +47,4 @@ private:
 	std::vector<VertexRGB> vertices;
 	std::vector<uint16_t> indices;
 };
+#endif // !_RECTANGLE_H_

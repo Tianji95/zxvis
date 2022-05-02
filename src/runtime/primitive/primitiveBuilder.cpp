@@ -1,10 +1,25 @@
 #include "primitiveBuilder.h"
+#include "rectangle.h"
+#include "cube.h"
 
 void PrimitiveBuilder::BuildRectangle(vec3& pos, float width, float height)
 {
 	Primitive* prim = new RectangleRGB(pos, width, height, scale, color, indexOffset);
 	prims.push_back(prim);
 	indexOffset += 4;
+	if (vb.data != nullptr) {
+		ResetVertexBuffer();
+	}
+	if (ib.data != nullptr) {
+		ResetIndexBuffer();
+	}
+}
+
+void PrimitiveBuilder::BuildCube(vec3& pos, float width, float height, float length)
+{
+	Primitive* prim = new CubeRGB(pos, width, height, length, scale, color, indexOffset);
+	prims.push_back(prim);
+	indexOffset += 8;
 	if (vb.data != nullptr) {
 		ResetVertexBuffer();
 	}
