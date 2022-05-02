@@ -2,15 +2,20 @@
 #include <OpenXLSX.hpp>
 
 static std::vector<vec4> colors = {
+	{0.804,0.788,0.788,1}, // 	Snow3  205 201 201
+	{0.329, 0.439, 0.776,1}, // #5470C6 echarts dark blue
+	{0.93333, 0.4, 0.4,1}, // #EE6666 echarts red
+	{0.98, 0.784, 0.3451,1}, // #FAC858 echarts yellow
+	{0.5686, 0.8, 0.459,1}, // #91CC75 echarts green
+	{0.451, 0.753, 0.87,1}, // #73C0DE echarts blue
 	{1, 0.855, 0.7255,1}, // PeachPuff 255 218 185
-	{0.553, 0.9333, 0.9333,1}, // DarkSlateGray2 141 238 238
+
 	{0.902,0.902,0.98,1}, //	lavender   230 230 250
 	{0.3294,1,0.62353,1}, // SeaGreen1    84 255 159
 	{0.51765,0.439,1,1}, // LightSlateBlue   132 112 255
 
 	{1,0.9255,0.545,1}, // LightGoldenrod1   255 236 139
 	{1,0.4157,0.4157,1}, // IndianRed1  255 106 106
-	{0.804,0.788,0.788,1}, // 	Snow3  205 201 201
 };
 
 HnmfData HNMFExcelLoader::LoadData(std::string& path)
