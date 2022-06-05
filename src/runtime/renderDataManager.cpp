@@ -17,6 +17,8 @@ void RenderDataManager::MakeData()
 
     HNMFLoader* loader = new HNMFExcelLoader();
     HnmfData data = loader->LoadData(std::string("F:/GitHub/zxvis/resources/test_data/hnmftest.xlsx"));
+    // HnmfData data = loader->LoadData(std::string("C:/Users/Wenjing Xiong/Desktop/digital_governance_topicflow/hnmftest.xlsx"));
+    // builder->BuildPie(vec3(0.95f, 0.0f, 0.00f), 0.04, 0, 180);
 
     float widthGap = 1.0f / data.size();
     float blockWidth = 0.8f / data.size();
@@ -34,20 +36,39 @@ void RenderDataManager::MakeData()
         }
         blocky += (blockCnt / 2) * (heightGap + blockHeight);
         for (auto& block : yearIter.second) {
-            float subblockx = blockx;
-            float subblocky = blocky;
+            float startAngle = 0;
             for (auto subblock : block.data) {
-                float subblockWidth = subblock.percentage * blockWidth;
                 builder->SetColor(vec3(subblock.color.x, subblock.color.y, subblock.color.z));
-                builder->BuildCube(vec3(subblockx, subblocky, 0.0f), subblockWidth, blockHeight, 0.15f);
-                subblockx -= subblockWidth;
+                builder->BuildPie(vec3(blockx, blocky, 0.0f), blockHeight, startAngle, startAngle + 360 * subblock.percentage);
+                startAngle += 360 * subblock.percentage;
             }
             blocky -= blockHeight + heightGap;
         }
         startx -= widthGap + blockWidth;
     }
-  
 
+
+    //for (auto& yearIter : data) {
+    //    float blockx = startx;
+    //    unsigned int blockCnt = yearIter.second.size();
+    //    float blocky = starty;
+    //    if (blockCnt % 2 == 0) {
+    //        blocky -= (heightGap + blockHeight) / 2;
+    //    }
+    //    blocky += (blockCnt / 2) * (heightGap + blockHeight);
+    //    for (auto& block : yearIter.second) {
+    //        float subblockx = blockx;
+    //        float subblocky = blocky;
+    //        for (auto subblock : block.data) {
+    //            float subblockWidth = subblock.percentage * blockWidth;
+    //            builder->SetColor(vec3(subblock.color.x, subblock.color.y, subblock.color.z));
+    //            builder->BuildCube(vec3(subblockx, subblocky, 0.0f), subblockWidth, blockHeight, 0.15f);
+    //            subblockx -= subblockWidth;
+    //        }
+    //        blocky -= blockHeight + heightGap;
+    //    }
+    //    startx -= widthGap + blockWidth;
+    //}
 
     vb = builder->GetVertexBuffer();
     ib = builder->GetIndexBuffer();

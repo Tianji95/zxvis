@@ -11,6 +11,7 @@ public:
 	~PrimitiveBuilder() = default;
 	virtual void BuildRectangle(vec3& pos, float width, float height);
 	virtual void BuildCube(vec3& pos, float width, float height, float length);
+	virtual void BuildPie(vec3& pos, float radius, float startAngle, float endAngle);
 	virtual void BuildCircle(vec3& pos, float r);
 	virtual void SetColor(vec3& c);
 	virtual void SetScale(vec3& s);

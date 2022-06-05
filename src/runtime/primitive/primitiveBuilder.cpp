@@ -1,7 +1,7 @@
 #include "primitiveBuilder.h"
 #include "rectangle.h"
 #include "cube.h"
-
+#include "pie.h"
 void PrimitiveBuilder::BuildRectangle(vec3& pos, float width, float height)
 {
 	Primitive* prim = new RectangleRGB(pos, width, height, scale, color, indexOffset);
@@ -27,6 +27,23 @@ void PrimitiveBuilder::BuildCube(vec3& pos, float width, float height, float len
 		ResetIndexBuffer();
 	}
 }
+
+void PrimitiveBuilder::BuildPie(vec3& pos, float radius, float startAngle, float endAngle)
+{
+	if (endAngle - startAngle < 0.00001f) {
+		return;
+	}
+	Primitive* prim = new PieRGB(pos, radius, startAngle, endAngle, color, indexOffset);
+	prims.push_back(prim);
+	indexOffset += endAngle - startAngle + 2;
+	if (vb.data != nullptr) {
+		ResetVertexBuffer();
+	}
+	if (ib.data != nullptr) {
+		ResetIndexBuffer();
+	}
+}
+
 
 void PrimitiveBuilder::BuildCircle(vec3& pos, float r)
 {
