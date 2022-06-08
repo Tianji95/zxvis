@@ -28,7 +28,7 @@ void PrimitiveBuilder::BuildCube(vec3& pos, float width, float height, float len
 	}
 }
 
-void PrimitiveBuilder::BuildPie(vec3& pos, float radius, float startAngle, float endAngle)
+void PrimitiveBuilder::BuildPie(vec3& pos, float radius, int startAngle, int endAngle)
 {
 	if (endAngle - startAngle < 0.00001f) {
 		return;

@@ -26,7 +26,7 @@ void RenderDataManager::MakeData()
     float heightGap = 0.1f;
     float startx = 0.90f;
     float starty = 0.0f;
-
+    int count = 0;
     for (auto& yearIter : data) {
         float blockx = startx;
         unsigned int blockCnt = yearIter.second.size();
@@ -40,10 +40,20 @@ void RenderDataManager::MakeData()
             for (auto subblock : block.data) {
                 builder->SetColor(vec3(subblock.color.x, subblock.color.y, subblock.color.z));
                 builder->BuildPie(vec3(blockx, blocky, 0.0f), blockHeight, startAngle, startAngle + 360 * subblock.percentage);
+                //count++;
+                //if (count == 21) {
+                //    break;
+                //}
                 startAngle += 360 * subblock.percentage;
             }
             blocky -= blockHeight + heightGap;
+            //if (count == 21) {
+            //    break;
+            //}
         }
+        //if (count == 21) {
+        //    break;
+        //}
         startx -= widthGap + blockWidth;
     }
 
