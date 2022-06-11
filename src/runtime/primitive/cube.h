@@ -94,6 +94,11 @@ public:
 		ib.typeSize = sizeof(uint16_t);
 		return ib;
 	}
+
+	virtual size_t GetVertexCount() override
+	{
+		return vertices.size();
+	}
 private:
 	std::vector<VertexRGB> vertices;
 	std::vector<uint16_t> indices;

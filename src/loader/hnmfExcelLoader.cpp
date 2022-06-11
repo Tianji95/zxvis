@@ -44,14 +44,24 @@ HnmfData HNMFExcelLoader::LoadData(std::string& path)
 			}
 			Block block;
 			block.name = readValues[0].get<std::string>();
+			block.value = 0;
+			for (int colIdx = 1; colIdx < readValues.size(); colIdx++) {
+				if (readValues[colIdx].type() == OpenXLSX::XLValueType::Integer) {
+					block.value += readValues[colIdx].get<int>();
+				}
+				else if (readValues[colIdx].type() == OpenXLSX::XLValueType::Float) {
+					block.value += readValues[colIdx].get<float>();
+				}
+			}
+
 			for (int colIdx = 1; colIdx < readValues.size(); colIdx++) {
 				SubBlock subBlock;
 				subBlock.name = titles[colIdx];
 				if (readValues[colIdx].type() == OpenXLSX::XLValueType::Integer) {
-					subBlock.percentage = readValues[colIdx].get<int>();
+					subBlock.percentage = 1.0 * readValues[colIdx].get<int>() / block.value;
 				}
 				else if (readValues[colIdx].type() == OpenXLSX::XLValueType::Float) {
-					subBlock.percentage = readValues[colIdx].get<float>();
+					subBlock.percentage = 1.0 * readValues[colIdx].get<float>() / block.value;
 				}
 				subBlock.color = colors[colIdx % colors.size()];
 				block.data.push_back(subBlock);

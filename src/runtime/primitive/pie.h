@@ -21,7 +21,7 @@ public:
 		vertices.push_back(v); // start line
 		indexCnt += 2;
 		do {
-			angle += 1.0f;
+			angle += 0.1f;
 			v.pos.x = pos.x + radius * cos(angle / 180.0f * 3.1415926535);
 			v.pos.y = pos.y + radius * sin(angle / 180.0f * 3.1415926535);
 			vertices.push_back(v);
@@ -49,6 +49,10 @@ public:
 		ib.data = (uint8_t*)indices.data();
 		ib.typeSize = sizeof(uint16_t);
 		return ib;
+	}
+	virtual size_t GetVertexCount() override
+	{
+		return vertices.size();
 	}
 
 private:

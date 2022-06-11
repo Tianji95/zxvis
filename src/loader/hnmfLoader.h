@@ -14,6 +14,7 @@ struct SubBlock {
 struct Block {
 	std::vector<SubBlock> data;
 	std::string name;
+	float value;
 };
 using YearData = std::vector<Block>;
 using HnmfData = std::map<int, YearData>;

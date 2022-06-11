@@ -25,39 +25,34 @@ void RenderDataManager::MakeData()
     float blockHeight = 0.05f;
     float heightGap = 0.1f;
     float startx = 0.90f;
-    float starty = 0.0f;
+    float starty = 0.7f;
     int count = 0;
     for (auto& yearIter : data) {
         float blockx = startx;
         unsigned int blockCnt = yearIter.second.size();
         float blocky = starty;
-        if (blockCnt % 2 == 0) {
-            blocky -= (heightGap + blockHeight) / 2;
-        }
-        blocky += (blockCnt / 2) * (heightGap + blockHeight);
+
         for (auto& block : yearIter.second) {
+            blockHeight = block.value / 10.0f;
+            blocky -= blockHeight;
+
             float startAngle = 0;
             for (auto subblock : block.data) {
                 builder->SetColor(vec3(subblock.color.x, subblock.color.y, subblock.color.z));
                 builder->BuildPie(vec3(blockx, blocky, 0.0f), blockHeight, startAngle, startAngle + 360 * subblock.percentage);
-                //count++;
-                //if (count == 21) {
-                //    break;
-                //}
                 startAngle += 360 * subblock.percentage;
             }
             blocky -= blockHeight + heightGap;
-            //if (count == 21) {
-            //    break;
-            //}
         }
-        //if (count == 21) {
-        //    break;
-        //}
         startx -= widthGap + blockWidth;
     }
 
-
+    //float widthGap = 1.0f / data.size();
+    //float blockWidth = 0.8f / data.size();
+    //float blockHeight = 0.05f;
+    //float heightGap = 0.1f;
+    //float startx = 0.90f;
+    //float starty = 0.0f;
     //for (auto& yearIter : data) {
     //    float blockx = startx;
     //    unsigned int blockCnt = yearIter.second.size();

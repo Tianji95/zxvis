@@ -6,7 +6,7 @@ void PrimitiveBuilder::BuildRectangle(vec3& pos, float width, float height)
 {
 	Primitive* prim = new RectangleRGB(pos, width, height, scale, color, indexOffset);
 	prims.push_back(prim);
-	indexOffset += 4;
+	indexOffset += prim->GetVertexCount();
 	if (vb.data != nullptr) {
 		ResetVertexBuffer();
 	}
@@ -19,7 +19,7 @@ void PrimitiveBuilder::BuildCube(vec3& pos, float width, float height, float len
 {
 	Primitive* prim = new CubeRGB(pos, width, height, length, scale, color, indexOffset);
 	prims.push_back(prim);
-	indexOffset += 8;
+	indexOffset += prim->GetVertexCount();
 	if (vb.data != nullptr) {
 		ResetVertexBuffer();
 	}
@@ -28,14 +28,14 @@ void PrimitiveBuilder::BuildCube(vec3& pos, float width, float height, float len
 	}
 }
 
-void PrimitiveBuilder::BuildPie(vec3& pos, float radius, int startAngle, int endAngle)
+void PrimitiveBuilder::BuildPie(vec3& pos, float radius, float startAngle, float endAngle)
 {
 	if (endAngle - startAngle < 0.00001f) {
 		return;
 	}
 	Primitive* prim = new PieRGB(pos, radius, startAngle, endAngle, color, indexOffset);
 	prims.push_back(prim);
-	indexOffset += endAngle - startAngle + 2;
+	indexOffset += prim->GetVertexCount();
 	if (vb.data != nullptr) {
 		ResetVertexBuffer();
 	}

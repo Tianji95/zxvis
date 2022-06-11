@@ -19,4 +19,5 @@ public:
 	virtual ~Primitive(){ }
 	virtual VertexBuffer GetVerticesBuffer() = 0;
 	virtual IndexBuffer GetIndicesBuffer() = 0;
+	virtual size_t GetVertexCount() = 0;
 };
