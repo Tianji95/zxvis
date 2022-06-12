@@ -17,8 +17,16 @@ INCLUDE_DIRECTORIES( BEFORE
 E:/vulkansdk/Include
 )
 
+set(BASE_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs")
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    SET(GLFW_LIBRARY_PATH "${BASE_LIBRARY_PATH}/glfw/x64")
+else()
+    SET(GLFW_LIBRARY_PATH "${BASE_LIBRARY_PATH}/glfw/x86")
+endif()
+LINK_DIRECTORIES("${GLFW_LIBRARY_PATH}")
 LINK_DIRECTORIES("E:/vulkansdk/Lib")
-link_libraries("vulkan-1.lib")
+link_libraries("vulkan-1.lib" "glfw3.lib")
+
 
 file(GLOB SOURCE
     ./src/app/*.cpp

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <glm/gtc/matrix_transform.hpp>
-#define STB_IMAGE_IMPLEMENTATION // 这个算是stb的一个小坑，必须要先定义宏，才能用stb的实现
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <chrono>
 #include "common.h"
@@ -54,6 +54,9 @@ void RenderApplication::Run()
     delete pipelineInfo;
     vkDestroyDescriptorPool(device, descriptorPool, nullptr);
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
+    vkDestroyImage(device, msaaImage, nullptr);
+    vkFreeMemory(device, msaaImageMemory, nullptr);
+    vkDestroyImageView(device, msaaImageView, nullptr);
     //vkDestroyImage(device, textureImage, nullptr);
     //vkFreeMemory(device, textureImageMemory, nullptr);
     vkDestroyBuffer(device, uniformBuffer, nullptr);
