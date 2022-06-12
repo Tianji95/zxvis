@@ -10,7 +10,7 @@ public:
 	{
 	}
 	virtual ~SimpleColorPipe() = default;
-	virtual void Create() override;
+	virtual void Create(VkSampleCountFlagBits msaaSampleCount) override;
 	virtual void Destroy() override;
 
 protected:

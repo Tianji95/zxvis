@@ -9,7 +9,7 @@ public:
 		device(&device), renderPass(&rp), descriptorSetLayout(&dslayout), swapchainExtent(&swapchainextent)
 	{
 	}
-	virtual void Create() = 0;
+	virtual void Create(VkSampleCountFlagBits msaaSampleCount) = 0;
 	virtual void Destroy() = 0;
 	virtual VkPipeline GetvkPipeline()
 	{

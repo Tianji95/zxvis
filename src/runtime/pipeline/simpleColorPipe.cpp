@@ -5,7 +5,7 @@
 #include "simpleColorPipe.h"
 #include "vertex.h"
 
-void SimpleColorPipe::Create()
+void SimpleColorPipe::Create(VkSampleCountFlagBits msaaSampleCount)
 {
     uint32_t filelength;
     uint32_t* vertexShaderCode = readFile(filelength, "F:/GitHub/zxvis/src/shaders/simple_color.vert.spv");		// tmp
@@ -102,7 +102,7 @@ void SimpleColorPipe::Create()
     VkPipelineMultisampleStateCreateInfo multisampling = {};
     multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     multisampling.sampleShadingEnable = VK_FALSE;
-    multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    multisampling.rasterizationSamples = msaaSampleCount;
     multisampling.minSampleShading = 1.0f; // Optional
     multisampling.pSampleMask = nullptr; // Optional
     multisampling.alphaToCoverageEnable = VK_FALSE; // Optional

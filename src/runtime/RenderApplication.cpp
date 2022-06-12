@@ -19,6 +19,7 @@ void RenderApplication::Run()
     CreateMyWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
     CreateSwapChain();
     CreateCommandPool();
+    CreateMsaaImage();
     //CreateTextureImage();
     //CreateTextureImageView();
     //CreateTextureSampler();
@@ -506,29 +507,44 @@ void RenderApplication::CreateUniformBuffer()
 
 void RenderApplication::CreateRenderPass()
 {
-    VkAttachmentDescription colorAttachment = {};
-    colorAttachment.format = swapChainImageFormat;
-    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    VkAttachmentDescription colorAttachment[2] = { {0} };
+    // MSAA attachment
+    colorAttachment[0].format = swapChainImageFormat;
+    colorAttachment[0].samples = msaaSampleCount;
+    colorAttachment[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachment[0].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachment[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachment[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    // MSAA resolve to attachment
+    colorAttachment[1].format = swapChainImageFormat;
+    colorAttachment[1].samples = VK_SAMPLE_COUNT_1_BIT;
+    colorAttachment[1].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    colorAttachment[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachment[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment[1].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
     VkAttachmentReference colorAttachmentRef = {};
     colorAttachmentRef.attachment = 0;
     colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    VkAttachmentReference reesolveAttachmentRef = {};
+    reesolveAttachmentRef.attachment = 1;
+    reesolveAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkSubpassDescription subpass = {};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef;
+    subpass.pResolveAttachments = &reesolveAttachmentRef;
 
     VkRenderPassCreateInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassInfo.attachmentCount = 1;
-    renderPassInfo.pAttachments = &colorAttachment;
+    renderPassInfo.attachmentCount = 2;
+    renderPassInfo.pAttachments = colorAttachment;
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
 
@@ -624,7 +640,7 @@ void RenderApplication::CreateDescriptorSet()
 void RenderApplication::CreatePipeline()
 {
     pipelineInfo = new SimpleColorPipe(device, renderPass, descriptorSetLayout, swapChainExtent);
-    pipelineInfo->Create();
+    pipelineInfo->Create(msaaSampleCount);
 }
 
 void RenderApplication::CreateFrameBuffers()
@@ -633,10 +649,14 @@ void RenderApplication::CreateFrameBuffers()
     for (size_t i = 0; i < swapChainImageViews.size(); i++) {
 
         VkFramebufferCreateInfo framebufferInfo = {};
+        std::array<VkImageView, 2> attachments = {
+            msaaImageView,
+            swapChainImageViews[i]
+        };
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = renderPass;
-        framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = &swapChainImageViews[i];
+        framebufferInfo.attachmentCount = 2;
+        framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = swapChainExtent.width;
         framebufferInfo.height = swapChainExtent.height;
         framebufferInfo.layers = 1;
@@ -837,7 +857,7 @@ VkImageView RenderApplication::CreateImageView(VkImage image, VkFormat format)
     return imageView;
 }
 
-void RenderApplication::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+void RenderApplication::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkSampleCountFlagBits multiSampleCount)
 {
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -851,7 +871,7 @@ void RenderApplication::CreateImage(uint32_t width, uint32_t height, VkFormat fo
     imageInfo.tiling = tiling;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageInfo.usage = usage;
-    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageInfo.samples = multiSampleCount;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VK_CHECK_RESULT(vkCreateImage(device, &imageInfo, nullptr, &image));
@@ -890,7 +910,7 @@ void RenderApplication::CreateTextureImage()
     vkUnmapMemory(device, stagingBufferMemory);
     stbi_image_free(pixels);
 
-    CreateImage(texWidth, texHeight, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+    CreateImage(texWidth, texHeight, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory, VK_SAMPLE_COUNT_1_BIT);
     TransitionImageLayout(textureImage, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
     TransitionImageLayout(textureImage, VK_FORMAT_R32G32B32_UINT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -924,6 +944,12 @@ void RenderApplication::CreateTextureSampler()
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 0.0f;
     VK_CHECK_RESULT(vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler));
+}
+
+void RenderApplication::CreateMsaaImage()
+{
+    CreateImage(swapChainExtent.width, swapChainExtent.height, swapChainImageFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, msaaImage, msaaImageMemory, msaaSampleCount);
+    msaaImageView = CreateImageView(msaaImage, swapChainImageFormat);
 }
 
 void RenderApplication::UpdateUniformBuffer()

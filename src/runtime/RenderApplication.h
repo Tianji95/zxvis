@@ -41,12 +41,13 @@ private:
     void CreateTextureImage();
     void CreateTextureImageView();
     void CreateTextureSampler();
+    void CreateMsaaImage();
 
     void DrawFrame();
     void UpdateUniformBuffer();
 
     VkImageView CreateImageView(VkImage image, VkFormat format);
-    void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);;
+    void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkSampleCountFlagBits multiSampleCount);;
     VkCommandBuffer CreateSingleTimeCommandBuffer();
     void SubmitSingleTimeCommandBuffer(VkCommandBuffer commandBuffer);
     void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -73,6 +74,10 @@ private:
     VkSurfaceKHR surface;
     VkFormat     swapChainImageFormat;
 
+    VkSampleCountFlagBits msaaSampleCount = VK_SAMPLE_COUNT_4_BIT;
+    VkImage msaaImage;
+    VkDeviceMemory msaaImageMemory;
+    VkImageView msaaImageView;
 
     VkSwapchainKHR             swapChain;
     std::vector<VkImage>       swapChainImages;
